@@ -1,0 +1,9 @@
+[package]
+name = "aoc_helper"
+version = "0.1.0"
+authors = ["MajorX234 <majorx234@googlemail.com>"]
+edition = "2021"
+
+[lib]
+name = "aoc_helper"
+path = "src/lib.rs"
