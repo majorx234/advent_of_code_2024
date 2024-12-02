@@ -80,5 +80,23 @@ fn main() {
     for (value_left, value_right) in two_lists.left.iter().zip(two_lists.right.iter()) {
         sum_diff += value_left.abs_diff(*value_right);
     }
-    println!("sum_diff: {}", sum_diff);
+    println!("task1: sum_diff: {}", sum_diff);
+    let mut sum_occurence = 0;
+    let mut marker = 0;
+    for i in 0..1000 {
+        let elem = two_lists.left[i];
+
+        let mut occurence = 0;
+        for j in marker..1000 {
+            if elem == two_lists.right[j] {
+                occurence += 1;
+                marker = j;
+            }
+            if elem < two_lists.right[j] {
+                break;
+            }
+        }
+        sum_occurence += occurence * elem;
+    }
+    println!("tas2: sum_occurence: {}", sum_occurence);
 }
