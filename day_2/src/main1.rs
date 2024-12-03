@@ -57,7 +57,17 @@ fn condition2(row: &[u32], state: &mut State) -> bool {
     true
 }
 
-fn check_row(row: &Vec<u32>) -> bool {
+fn copy_vec(old: &[u32], mask_idx: usize) -> Vec<u32> {
+    let mut new = Vec::new();
+    for (idx, elem) in old.iter().enumerate() {
+        if idx != mask_idx {
+            new.push(*elem);
+        }
+    }
+    new
+}
+
+fn check_row(row: &Vec<u32>) -> Result<(), usize> {
     //for (idx, elem) in row.iter().enumerate() {}
     let mut state = State {
         increase: false,
@@ -77,7 +87,11 @@ fn check_row(row: &Vec<u32>) -> bool {
         state.idx += 1;
     }
     println!("check_row: {:?} is {}", row, state.save);
-    state.save
+    if state.save {
+        Ok(())
+    } else {
+        Err(state.idx)
+    }
 }
 
 fn main() {
@@ -88,11 +102,29 @@ fn main() {
             row_list.push(row);
         }
     }
-    let mut sum_save = 0;
+    let mut sum_save1 = 0;
+    let mut sum_save1x = 0;
     for row in row_list.iter() {
-        if check_row(row) {
-            sum_save += 1;
+        match check_row(row) {
+            Ok(_) => sum_save1 += 1,
+            Err(idx) => {
+                let new_vec1 = copy_vec(row, idx);
+                let new_vec2 = copy_vec(row, idx + 1);
+                let save3 = if idx > 0 {
+                    let new_vec3 = copy_vec(row, idx - 1);
+                    check_row(&new_vec3).is_ok()
+                } else {
+                    false
+                };
+                if check_row(&new_vec1).is_ok() || check_row(&new_vec2).is_ok() || save3 {
+                    sum_save1x += 1;
+                }
+            }
         }
     }
-    println!("sum_save = {}", sum_save);
+    println!(
+        "sum_save1 = {}, sum_dave2 = {}",
+        sum_save1,
+        sum_save1 + sum_save1x
+    );
 }
