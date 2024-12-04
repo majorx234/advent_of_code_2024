@@ -1,0 +1,14 @@
+[package]
+name = "day_4"
+version = "0.1.0"
+authors = ["MajorX234 <majorx234@googlemail.com>"]
+edition = "2021"
+
+[[bin]]
+name = "day_4_task_1"
+path = "src/main1.rs"
+
+[dependencies]
+aoc_helper = {path = "../aoc_helper", version = "0.1.0"}
+nom = {version = "7.1.3"}
+regex = {version = "1.11.1"}
