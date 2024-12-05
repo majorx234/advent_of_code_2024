@@ -15,7 +15,7 @@ fn size_of_row(i: usize, max_size: usize) -> usize {
     if i < max_size {
         i + 1
     } else {
-        2 * max_size - i
+        2 * max_size - i - 1
     }
 }
 
@@ -27,10 +27,10 @@ fn diagonal_left_matrix_at(i: usize, j: usize, matrix: &[String], max_size: usiz
     } else {
         (max_size - 1) - j
     };
-    let y = if i <= max_size {
+    let y = if i < max_size {
         0 + j
     } else {
-        (i - max_size) + j
+        (i + 1 - max_size) + j
     };
     matrix[x].chars().nth(y).unwrap()
 }
@@ -41,13 +41,14 @@ fn diagonal_right_matrix_at(i: usize, j: usize, matrix: &[String], max_size: usi
     let x = if i < max_size {
         0 + j
     } else {
-        (i - max_size) + j
+        ((i + 1) - max_size) + j
     };
     let y = if i < max_size {
         max_size - (i + 1) + j
     } else {
         0 + j
     };
+    //println!("i: {}, j: {}, x: {}, y: {}, max: {}", i, j, x, y, max_size);
     matrix[x].chars().nth(y).unwrap()
 }
 
@@ -62,37 +63,33 @@ fn main() {
     let horizontal_size = row_list[0].len();
 
     // check row wise
-    let mut sum: u32 = 0;
+    let mut sum_row: u32 = 0;
     for i in 0..vertical_size {
         for j in 0..(vertical_size - 3) {
             let mut window: [char; 4] = ['0', '0', '0', '0'];
             for k in 0..4 {
                 window[k] = row_list[i].chars().nth(j + k).unwrap();
             }
-            if check_for_xmas_samx(&window) == 1 {
-                println!("window: {:?}, j:{} i: {}", window, i, j);
-            }
-            sum += check_for_xmas_samx(&window);
+            sum_row += check_for_xmas_samx(&window);
         }
     }
-    println!("sum: {}", sum);
+    println!("sum_row: {}", sum_row);
 
     // check column wise
+    let mut sum_col: u32 = 0;
     for j in 0..vertical_size {
         for i in 0..(vertical_size - 3) {
             let mut window: [char; 4] = ['0', '0', '0', '0'];
             for k in 0..4 {
                 window[k] = row_list[i + k].chars().nth(j).unwrap();
             }
-            if check_for_xmas_samx(&window) == 1 {
-                println!("window: {:?}, j:{} i: {}", window, i, j);
-            }
-            sum += check_for_xmas_samx(&window);
+            sum_col += check_for_xmas_samx(&window);
         }
     }
-    println!("sum: {}", sum);
+    println!("sum_col: {}", sum_col);
 
     // check diagonal
+    let mut sum_diag_left: u32 = 0;
     for i in 0..(2 * vertical_size) {
         let row_size = size_of_row(i, vertical_size);
         if row_size >= 4 {
@@ -101,14 +98,14 @@ fn main() {
                 for k in 0..4 {
                     window[k] = diagonal_left_matrix_at(i, j + k, &row_list, vertical_size);
                 }
-                println!("window: {:?}, j:{} i: {}", window, i, j);
-                sum += check_for_xmas_samx(&window);
+                sum_diag_left += check_for_xmas_samx(&window);
             }
         }
     }
-    println!("sum: {}", sum);
+    println!("sum_diag_left: {}", sum_diag_left);
 
     // check diagonal
+    let mut sum_diag_right: u32 = 0;
     for i in 0..(2 * vertical_size) {
         let row_size = size_of_row(i, vertical_size);
         if row_size >= 4 {
@@ -117,10 +114,13 @@ fn main() {
                 for k in 0..4 {
                     window[k] = diagonal_right_matrix_at(i, j + k, &row_list, vertical_size);
                 }
-                println!("window: {:?}, j:{} i: {}", window, i, j);
-                sum += check_for_xmas_samx(&window);
+                sum_diag_right += check_for_xmas_samx(&window);
             }
         }
     }
-    println!("sum: {}", sum);
+    println!("sum_diag_right: {}", sum_diag_right);
+    println!(
+        "sum: {}",
+        sum_row + sum_col + sum_diag_left + sum_diag_right
+    );
 }
