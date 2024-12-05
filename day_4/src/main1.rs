@@ -11,6 +11,19 @@ fn check_for_xmas_samx(window: &[char]) -> u32 {
     0
 }
 
+fn check_for_x_mas(window: &[[char; 3]; 3]) -> u32 {
+    if !(window[1][1] == 'A') {
+        return 0;
+    }
+    if window[0][0] == 'M' && window[2][2] == 'S' || window[0][0] == 'S' && window[2][2] == 'M' {
+        if window[0][2] == 'M' && window[2][0] == 'S' || window[0][2] == 'S' && window[2][0] == 'M'
+        {
+            return 1;
+        }
+    }
+    0
+}
+
 fn size_of_row(i: usize, max_size: usize) -> usize {
     if i < max_size {
         i + 1
@@ -120,7 +133,21 @@ fn main() {
     }
     println!("sum_diag_right: {}", sum_diag_right);
     println!(
-        "sum: {}",
+        "task1: sum: {}",
         sum_row + sum_col + sum_diag_left + sum_diag_right
     );
+
+    let mut sum_xmas: u32 = 0;
+    for i in 1..vertical_size - 1 {
+        for j in 1..(vertical_size - 1) {
+            let mut window: [[char; 3]; 3] = [['0', '0', '0'], ['0', '0', '0'], ['0', '0', '0']];
+            for k in 0..3 {
+                for l in 0..3 {
+                    window[k][l] = row_list[i + k - 1].chars().nth(j + l - 1).unwrap();
+                }
+            }
+            sum_xmas += check_for_x_mas(&window);
+        }
+    }
+    println!("task2: sum_xmas {}", sum_xmas);
 }
