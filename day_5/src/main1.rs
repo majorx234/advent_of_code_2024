@@ -7,6 +7,7 @@ use nom::{
     sequence::separated_pair,
     IResult,
 };
+use std::collections::HashMap;
 use std::io::{self, prelude::*, BufReader};
 
 #[derive(PartialEq)]
@@ -45,6 +46,25 @@ fn main() {
             }
         }
     }
-    println!("order_list: {:?}", order_list);
-    println!("number_lists: {:?}", number_lists);
+    let mut number2index = HashMap::new();
+    let mut index2number = HashMap::new();
+    let mut index = 0;
+    for (n1, n2) in order_list.iter() {
+        if !number2index.contains_key(&n1) {
+            number2index.insert(n1, index);
+            index2number.insert(index, n1);
+        }
+        if !number2index.contains_key(&n2) {
+            number2index.insert(n1, index);
+            index2number.insert(index, n2);
+        }
+        index += 1;
+    }
+    let mut adjecence_matrix = Vec::new();
+    for _ in 0..index {
+        adjecence_matrix.push(vec![false; index]);
+    }
+    for (n1, n2) in order_list.iter() {
+        adjecence_matrix[number2index[&n1]][number2index[&n2]] = true;
+    }
 }
