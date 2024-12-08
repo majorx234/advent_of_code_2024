@@ -61,10 +61,13 @@ fn main() {
         index += 1;
     }
     let mut adjecence_matrix = Vec::new();
+    let mut inverse_adjecence_matrix = Vec::new();
     for _ in 0..index {
         adjecence_matrix.push(vec![false; index]);
+        inverse_adjecence_matrix.push(vec![false; index])
     }
     for (n1, n2) in order_list.iter() {
         adjecence_matrix[number2index[&n1]][number2index[&n2]] = true;
+        inverse_adjecence_matrix[number2index[&n2]][number2index[&n1]] = true;
     }
 }
