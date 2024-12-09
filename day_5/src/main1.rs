@@ -48,6 +48,7 @@ fn main() {
         }
     }
     let mut count_ok = 0;
+    let mut count_not_ok = 0;
     for number_list in &number_lists {
         let mut index = 0;
         let mut number2index = HashMap::new();
@@ -105,8 +106,10 @@ fn main() {
             }
         }
         let mut number2order_index = HashMap::new();
+        let mut order_index2number = HashMap::new();
         for (order_index, index) in ordered_node_list.iter().enumerate() {
             number2order_index.insert(index2number[&(*index as usize)], order_index);
+            order_index2number.insert(order_index, index2number[&(*index as usize)]);
         }
 
         let mut last_order_index = 0;
@@ -120,7 +123,12 @@ fn main() {
         }
         if is_ok {
             count_ok += number_list[number_list.len() / 2];
+        } else {
+            println!("{:?}", ordered_node_list);
+
+            count_not_ok += order_index2number[&(number_list.len() / 2)];
         }
     }
     println!("count_ok :{}", count_ok);
+    println!("count_not_ok :{}", count_not_ok);
 }
