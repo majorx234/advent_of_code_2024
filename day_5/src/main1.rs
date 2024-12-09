@@ -47,71 +47,71 @@ fn main() {
             }
         }
     }
-    let mut number2index = HashMap::new();
-    let mut index2number = HashMap::new();
-    let mut node_list = HashSet::new();
-    let mut index = 0;
-    for (n1, n2) in order_list.iter() {
-        if !number2index.contains_key(&n1) {
-            number2index.insert(n1, index);
-            index2number.insert(index, n1);
-            index += 1;
-        }
-        if !number2index.contains_key(&n2) {
-            number2index.insert(n2, index);
-            index2number.insert(index, n2);
-            index += 1;
-        }
-    }
-    println!("num elements: {} ", index);
-    for node in 0..index {
-        node_list.insert(node);
-    }
-    let mut adjecence_matrix = Vec::new();
-    let mut inverse_adjecence_matrix = Vec::new();
-    for _ in 0..index {
-        adjecence_matrix.push(vec![false; index]);
-        inverse_adjecence_matrix.push(vec![false; index])
-    }
-    for (n1, n2) in order_list.iter() {
-        adjecence_matrix[number2index[&n1]][number2index[&n2]] = true;
-        inverse_adjecence_matrix[number2index[&n2]][number2index[&n1]] = true;
-    }
-
-    //find ordering:
-    let mut ordered_node_list = Vec::new();
-    while !node_list.is_empty() {
-        // check node with no incomming etches
-        let mut no_incommming_edges: Option<u32> = None;
-        for node in &node_list {
-            let mut has_incomming_nodes = false;
-            for node_incomming_edges in &inverse_adjecence_matrix[*node] {
-                has_incomming_nodes |= node_incomming_edges;
-            }
-            if !has_incomming_nodes {
-                no_incommming_edges = Some(*node as u32);
-            }
-        }
-        if let Some(node_with_no_icomming_etches) = no_incommming_edges {
-            ordered_node_list.push(node_with_no_icomming_etches);
-            node_list.remove(&(node_with_no_icomming_etches as usize));
-            for vec in inverse_adjecence_matrix.iter_mut() {
-                vec[node_with_no_icomming_etches as usize] = false;
-            }
-        } else {
-            println!("loop detected!");
-            println!("{:?}", inverse_adjecence_matrix);
-        }
-    }
-    let mut number2order_index = HashMap::new();
-    for (order_index, index) in ordered_node_list.iter().enumerate() {
-        number2order_index.insert(index2number[&(*index as usize)], order_index);
-    }
     let mut count_ok = 0;
-    for number_list in number_lists {
+    for number_list in &number_lists {
+        let mut index = 0;
+        let mut number2index = HashMap::new();
+        let mut index2number = HashMap::new();
+
+        for number in number_list {
+            if !number2index.contains_key(&number) {
+                number2index.insert(number, index);
+                index2number.insert(index, number);
+                index += 1;
+            }
+        }
+        let mut node_list = HashSet::new();
+        for node in 0..index {
+            node_list.insert(node);
+        }
+
+        let mut adjecence_matrix = Vec::new();
+        let mut inverse_adjecence_matrix = Vec::new();
+        for _ in 0..index {
+            adjecence_matrix.push(vec![false; index]);
+            inverse_adjecence_matrix.push(vec![false; index])
+        }
+        for (n1, n2) in order_list.iter() {
+            if !(number_list.contains(n1) && number_list.contains(n2)) {
+                continue;
+            }
+            adjecence_matrix[number2index[&n1]][number2index[&n2]] = true;
+            inverse_adjecence_matrix[number2index[&n2]][number2index[&n1]] = true;
+        }
+
+        //find ordering:
+        let mut ordered_node_list = Vec::new();
+        while !node_list.is_empty() {
+            // check node with no incomming etches
+            let mut no_incommming_edges: Option<u32> = None;
+            for node in &node_list {
+                let mut has_incomming_nodes = false;
+                for node_incomming_edges in &inverse_adjecence_matrix[*node] {
+                    has_incomming_nodes |= node_incomming_edges;
+                }
+                if !has_incomming_nodes {
+                    no_incommming_edges = Some(*node as u32);
+                }
+            }
+            if let Some(node_with_no_icomming_etches) = no_incommming_edges {
+                ordered_node_list.push(node_with_no_icomming_etches);
+                node_list.remove(&(node_with_no_icomming_etches as usize));
+                for vec in inverse_adjecence_matrix.iter_mut() {
+                    vec[node_with_no_icomming_etches as usize] = false;
+                }
+            } else {
+                println!("loop detected!");
+                println!("{:?}", inverse_adjecence_matrix);
+            }
+        }
+        let mut number2order_index = HashMap::new();
+        for (order_index, index) in ordered_node_list.iter().enumerate() {
+            number2order_index.insert(index2number[&(*index as usize)], order_index);
+        }
+
         let mut last_order_index = 0;
         let mut is_ok = true;
-        for number in &number_list {
+        for number in number_list {
             if last_order_index > number2order_index[number] {
                 is_ok = false;
                 break;
