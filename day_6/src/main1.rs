@@ -12,6 +12,7 @@ fn main() {
     let mut map_list = Vec::new();
     let reader = read_arg_file().unwrap();
 
+    let mut obstacles = Vec::new();
     let mut pos_start: (usize, usize, Direction) = (0, 0, Direction::UP);
     for (y_idx, line) in reader.lines().enumerate() {
         let mut char_list = Vec::new();
@@ -27,6 +28,9 @@ fn main() {
             }
             if elem == '<' {
                 pos_start = (y_idx, x_idx, Direction::LEFT);
+            }
+            if elem == '#' {
+                obstacles.push((y_idx, x_idx));
             }
             char_list.push(elem);
         }
