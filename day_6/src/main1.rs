@@ -161,4 +161,13 @@ fn main() {
             }
         }
     }
+    let mut sum = 0;
+    for row in visit_map {
+        for elem in row {
+            if elem == '#' {
+                sum += 1;
+            }
+        }
+    }
+    println!("sum: {}", sum);
 }
